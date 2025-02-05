@@ -1,18 +1,22 @@
 import Meta from "@contexts/meta";
 import Github from "@contexts/github";
-import { createStore } from "solid-js/store";
-import { createResource, createMemo, onMount } from "solid-js";
+import Loader from "@components/loader";
+import DisplayError from "@components/displayError";
+import {
+  createResource,
+  onMount,
+  Switch,
+  Match,
+  createEffect,
+  createSignal,
+} from "solid-js";
 
 export default function Home() {
-  let hostElement: HTMLDivElement | null = null;
-  let errorElement: HTMLDivElement | null = null;
-
   const { updateTitle } = Meta.useMeta();
   const { getRawContent } = Github.useGithub();
-  const [account, _] = createStore({
-    username: "sleepy4k",
-    repo: "README.md",
-  });
+  const [hostElement, setHostElement] = createSignal<HTMLDivElement | null>(
+    null
+  );
 
   const fetchReadme = async (params: { username: string; repo: string }) => {
     const rawContent = await getRawContent(params.username, params.repo);
@@ -20,7 +24,10 @@ export default function Home() {
   };
 
   const [readme] = createResource(async () => {
-    const response = await fetchReadme(account);
+    const response = await fetchReadme({
+      username: "sleepy4k",
+      repo: "README.md",
+    });
     if (!response) return;
 
     return response
@@ -28,49 +35,11 @@ export default function Home() {
       .replaceAll(/<a/g, '<a style="text-decoration: none"');
   });
 
-  const MemorizedReadme = createMemo(() => {
-    if (readme.loading) {
-      return (
-        <div class="flex items-center justify-center min-h-screen">
-          <div class="animate-spin rounded-full h-32 w-32 border-t-8 border-yellow-500"></div>
-        </div>
-      );
-    }
+  createEffect(() => {
+    const parent = hostElement();
+    if (parent === null) return;
 
-    if (!errorElement) return;
-
-    if (readme.error) {
-      return (errorElement.innerHTML = `
-        <div class="flex items-center justify-center min-h-screen">
-          <div class="text-center">
-            <h2 class="h2">Failed to fetch data</h2>
-          </div>
-        </div>
-      `);
-    }
-
-    if (readme() === undefined) {
-      return (errorElement.innerHTML = `
-        <div class="flex items-center justify-center min-h-screen">
-          <div class="text-center">
-            <h2 class="h2">No data available</h2>
-          </div>
-        </div>
-      `);
-    }
-
-    // Check if element reference is available
-    if (!hostElement) {
-      return (errorElement.innerHTML = `
-        <div class="flex items-center justify-center min-h-screen">
-          <div class="text-center">
-            <h2 class="h2">Something went wrong while displaying data</h2>
-          </div>
-        </div>
-      `);
-    }
-
-    const shadowRoot = hostElement.attachShadow({ mode: "open" });
+    const shadowRoot = parent.attachShadow({ mode: "open" });
     shadowRoot.innerHTML = readme() || "";
   });
 
@@ -85,10 +54,27 @@ export default function Home() {
       </header>
 
       <section class="about-text">
-        <div ref={(el) => (errorElement = el)}></div>
-        <div class="injected-readme" ref={(el) => (hostElement = el)}>
-          <MemorizedReadme />
-        </div>
+        <Switch fallback={<Loader />}>
+          <Match when={readme.loading}>
+            <Loader />
+          </Match>
+
+          <Match when={readme.error}>
+            <DisplayError message="Failed to fetch data" />
+          </Match>
+
+          <Match when={readme() === undefined}>
+            <DisplayError message="No data available" />
+          </Match>
+
+          <Match when={readme() !== undefined}>
+            <div class="injected-readme" ref={(el) => setHostElement(el)}></div>
+          </Match>
+
+          <Match when={true}>
+            <DisplayError message="Something went wrong while displaying data" />
+          </Match>
+        </Switch>
       </section>
     </article>
   );

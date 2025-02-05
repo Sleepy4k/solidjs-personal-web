@@ -1,3 +1,4 @@
+import Loader from "@components/loader";
 import Meta from "@contexts/meta";
 import { IoBookOutline } from "solid-icons/io";
 import { createSignal, onMount, Show } from "solid-js";
@@ -21,9 +22,7 @@ export default function Home() {
       </header>
 
       <Show when={loading()}>
-        <div class="flex items-center justify-center min-h-screen">
-          <div class="animate-spin rounded-full h-32 w-32 border-t-8 border-yellow-500"></div>
-        </div>
+        <Loader />
       </Show>
 
       <Show when={!loading()}>

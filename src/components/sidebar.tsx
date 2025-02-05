@@ -1,6 +1,7 @@
 import { IMAGE_URL } from "@constants/github";
 import { onCleanup, onMount } from "solid-js";
 import Github from "@contexts/github";
+import socialConfig from "@config/social";
 import {
   IoChevronDownSharp,
   IoLocationOutline,
@@ -110,7 +111,7 @@ export default function Sidebar() {
           <li class="social-item">
             <a
               title="Linkedin Profile"
-              href="https://www.linkedin.com/in/apri-pandu"
+              href={socialConfig.linkedin}
               target="_blank"
               rel="noopener"
               class="social-link"
@@ -122,7 +123,7 @@ export default function Sidebar() {
           <li class="social-item">
             <a
               title="Github Profile"
-              href="https://github.com/sleepy4k"
+              href={socialConfig.github}
               target="_blank"
               rel="noopener"
               class="social-link"
@@ -134,7 +135,7 @@ export default function Sidebar() {
           <li class="social-item">
             <a
               title="Twitter Account"
-              href="https://twitter.com/artkana30"
+              href={socialConfig.twitter}
               target="_blank"
               rel="noopener"
               class="social-link"
@@ -146,7 +147,7 @@ export default function Sidebar() {
           <li class="social-item">
             <a
               title="Instagram Account"
-              href="https://instagram.com/artkana30"
+              href={socialConfig.instagram}
               target="_blank"
               rel="noopener"
               class="social-link"

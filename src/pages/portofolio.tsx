@@ -4,6 +4,8 @@ import Github from "@contexts/github";
 import { OPENGRAPH_URL } from "@constants/github";
 import { ITEMS_PER_PAGE } from "@constants/paginate";
 import { IoChevronDownOutline, IoEyeOutline } from "solid-icons/io";
+import Loader from "@components/loader";
+import DisplayError from "@components/displayError";
 import {
   createEffect,
   createSignal,
@@ -21,14 +23,6 @@ type TRepoList = {
 };
 
 export default function Home() {
-  const [selectList, setSelectList] = createSignal<HTMLButtonElement[]>([]);
-  const [filterList, setFilterList] = createSignal<HTMLButtonElement[]>([]);
-  const [selectValue, setSelectValue] = createSignal<HTMLDivElement | null>(
-    null
-  );
-  const [selectElement, setSelectElement] =
-    createSignal<HTMLButtonElement | null>(null);
-
   const { repos } = Github.useGithub();
   const [topics, setTopics] = createSignal<string[]>([]);
   const [repoList, setRepoList] = createSignal<TRepoList[]>([]);
@@ -38,6 +32,15 @@ export default function Home() {
   const [displayedRepoList, setDisplayedRepoList] = createSignal<TRepoList[]>(
     []
   );
+
+  // All the references section
+  const [selectList, setSelectList] = createSignal<HTMLButtonElement[]>([]);
+  const [filterList, setFilterList] = createSignal<HTMLButtonElement[]>([]);
+  const [selectValue, setSelectValue] = createSignal<HTMLDivElement | null>(
+    null
+  );
+  const [selectElement, setSelectElement] =
+    createSignal<HTMLButtonElement | null>(null);
 
   createEffect(() => {
     if (repos.loading || repos.error) return;
@@ -196,33 +199,19 @@ export default function Home() {
       <section class="projects">
         <Switch>
           <Match when={repos.loading || loading()}>
-            <div class="flex items-center justify-center min-h-screen">
-              <div class="animate-spin rounded-full h-32 w-32 border-t-8 border-yellow-500"></div>
-            </div>
+            <Loader />
           </Match>
 
           <Match when={repos.error}>
-            <div class="flex items-center justify-center min-h-screen">
-              <div class="text-center">
-                <h2 class="h2">Failed to fetch data</h2>
-              </div>
-            </div>
+            <DisplayError message="Failed to fetch data" />
           </Match>
 
           <Match when={repoList().length === 0}>
-            <div class="flex items-center justify-center min-h-screen">
-              <div class="text-center">
-                <h2 class="h2">No data available</h2>
-              </div>
-            </div>
+            <DisplayError message="No data available" />
           </Match>
 
           <Match when={displayedRepoList().length === 0}>
-            <div class="flex items-center justify-center min-h-screen">
-              <div class="text-center">
-                <h2 class="h2">No data available</h2>
-              </div>
-            </div>
+            <DisplayError message="No data available" />
           </Match>
 
           <Match when={true}>

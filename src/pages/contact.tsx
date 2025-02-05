@@ -8,13 +8,13 @@ import axios from "@services/axios";
 import InputError from "@components/inputError";
 import { useBeforeLeave } from "@solidjs/router";
 import sweetAlert from "@utils/sweetAlert";
-import { API_KEY, API_URL } from "@constants/web3form";
+import web3formConfig from "@config/web3form";
 
 export default function Home() {
   const { updateTitle } = Meta.useMeta();
   const group = createFormGroup({
     is_bot: createFormControl(false),
-    access_key: createFormControl(API_KEY),
+    access_key: createFormControl(web3formConfig.api.key),
     full_name: createFormControl("", {
       required: true,
       validators: [
@@ -60,7 +60,7 @@ export default function Home() {
     group.markSubmitted(true);
     const toastId = toast.loading("Sending message...");
 
-    await axios(API_URL)
+    await axios(web3formConfig.api.url)
       .post("/submit", {
         access_key: group.controls.access_key.value,
         name: group.controls.full_name.value,

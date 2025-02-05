@@ -8,6 +8,8 @@ import Meta from "@contexts/meta";
 import Github from "@contexts/github";
 import { isServer } from "solid-js/web";
 import { Toaster } from "solid-toast";
+import Loader from "@components/loader";
+import toastConfig from "@config/toaster";
 
 const App: Component = () => {
   onMount(() => {
@@ -26,24 +28,13 @@ const App: Component = () => {
       <main>
         <Router
           root={(props: RouteSectionProps) => (
-            <Suspense
-              fallback={
-                <div class="flex items-center justify-center min-h-screen">
-                  <div class="animate-spin rounded-full h-32 w-32 border-t-8 border-yellow-500"></div>
-                </div>
-              }
-            >
+            <Suspense fallback={<Loader />}>
               <Meta.Provider>
                 <Github.Provider>
                   <Toaster
                     gutter={8}
                     position="top-right"
-                    toastOptions={{
-                      style: {
-                        'background-color': "#333",
-                        color: "#fff",
-                      },
-                    }}
+                    toastOptions={toastConfig}
                   />
                   <Sidebar />
                   <div class="main-content">
