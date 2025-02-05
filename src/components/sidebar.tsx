@@ -146,7 +146,7 @@ export default function Sidebar() {
           <li class="social-item">
             <a
               title="Instagram Account"
-              href="http://instagram.com/artkana30"
+              href="https://instagram.com/artkana30"
               target="_blank"
               rel="noopener"
               class="social-link"
