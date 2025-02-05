@@ -110,7 +110,7 @@ export default function Sidebar() {
           <li class="social-item">
             <a
               title="Linkedin Profile"
-              href="https://www.linkedin.com/in/benjamin4k"
+              href="https://www.linkedin.com/in/apri-pandu"
               target="_blank"
               rel="noopener"
               class="social-link"
