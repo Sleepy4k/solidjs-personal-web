@@ -497,7 +497,7 @@ main {
 
 .navbar-link {
   color: var(--light-gray);
-  font-size: var(--fs-8);
+  font-size: 1rem;
   padding: 20px 7px;
   transition: color var(--transition-1);
 }
@@ -803,6 +803,11 @@ main {
   margin-bottom: 2vh;
 }
 
+.input-wrapper-test {
+  display: none;
+  margin-bottom: 2vh;
+}
+
 .input-error {
   color: var(--bittersweet-shimmer);
   font-size: var(--fs-8);
@@ -904,6 +909,7 @@ textarea.form-input::-webkit-resizer {
 
 .pagination {
   display: flex;
+  width: 100%;
   justify-content: center;
   margin-top: 20px;
 }
@@ -912,7 +918,7 @@ textarea.form-input::-webkit-resizer {
   padding: 8px 16px;
   margin: 0 5px;
   border: 1px solid #555;
-  background-color: #333;
+  background: #000;
   color: #eee;
   cursor: pointer;
   border-radius: 4px;
@@ -920,25 +926,69 @@ textarea.form-input::-webkit-resizer {
 }
 
 .pagination button:hover {
-  background-color: #444;
+  background: var(--bg-gradient-yellow-1);
+  color: var(--white-2);
 }
 
-.pagination button.active {
-  background-color: #0056b3;
-  color: #fff;
-  border-color: #0056b3;
+.pagination button:hover::before {
+  background: var(--bg-gradient-yellow-2);
 }
 
 .pagination button:disabled {
-  background-color: #555;
-  color: #888;
-  cursor: default;
-  border-color: #555;
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination button:disabled:hover {
+  background: var(--border-gradient-onyx);
+  color: var(--light-gray);
+}
+
+.pagination button:disabled:hover::before {
+  background: var(--bg-gradient-jet);
+}
+
+.pagination button.active {
+  background: var(--border-gradient-onyx);
+  color: var(--orange-yellow-crayola);
+  border: 1px solid var(--orange-yellow-crayola);
+}
+
+.pagination button.active:hover {
+  background: var(--bg-gradient-yellow-1);
+  color: var(--white-2);
+}
+
+.pagination button.active:hover::before {
+  background: var(--bg-gradient-yellow-2);
 }
 
 /*-----------------------------------*\
   #RESPONSIVE
 \*-----------------------------------*/
+
+/**
+ * responsive larger than 320px screen
+ */
+
+@media (min-width: 320px) {
+  /**
+   * #PAGINATE
+   */
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 5vh;
+    margin-bottom: 3vh;
+    gap: 2vw;
+    row-gap: 2vh;
+  }
+
+  .pagination button {
+    padding: 0.5rem 1rem;
+  }
+}
 
 /**
  * responsive larger than 450px screen
@@ -1133,6 +1183,23 @@ textarea.form-input::-webkit-resizer {
   .form-btn ion-icon {
     font-size: 18px;
   }
+
+  /**
+   * #PAGINATE
+   */
+
+  .pagination {
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 5vh;
+    margin-bottom: 3vh;
+    gap: 1vw;
+    row-gap: 2vh;
+  }
+
+  .pagination button {
+    padding: 0.75rem 1.25rem;
+  }
 }
 
 /**
@@ -1232,15 +1299,20 @@ textarea.form-input::-webkit-resizer {
   }
 
   /**
-   * PAGINATION
+   * #PAGINATE
    */
 
   .pagination {
     flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 5vh;
+    margin-bottom: 3vh;
+    gap: 0.5vw;
+    row-gap: 2vh;
   }
 
   .pagination button {
-    margin: 5px;
+    padding: 0.5rem 1rem;
   }
 }
 

@@ -21,16 +21,20 @@ type TRepoList = {
 };
 
 export default function Home() {
-  let selectValue: HTMLDivElement | null = null;
-  let selectElement: HTMLButtonElement | null = null;
   const [selectList, setSelectList] = createSignal<HTMLButtonElement[]>([]);
   const [filterList, setFilterList] = createSignal<HTMLButtonElement[]>([]);
+  const [selectValue, setSelectValue] = createSignal<HTMLDivElement | null>(
+    null
+  );
+  const [selectElement, setSelectElement] =
+    createSignal<HTMLButtonElement | null>(null);
 
   const { repos } = Github.useGithub();
   const [topics, setTopics] = createSignal<string[]>([]);
   const [repoList, setRepoList] = createSignal<TRepoList[]>([]);
   const [currentPage, setCurrentPage] = createSignal<number>(1);
   const [totalPages, setTotalPages] = createSignal<number>(1);
+  const [loading, setLoading] = createSignal<boolean>(true);
   const [displayedRepoList, setDisplayedRepoList] = createSignal<TRepoList[]>(
     []
   );
@@ -111,19 +115,49 @@ export default function Home() {
   };
 
   createEffect(() => {
+    const selectBtnElement = selectElement();
+    if (selectBtnElement === null) return;
+
+    selectBtnElement.addEventListener("click", () => {
+      selectBtnElement.classList.toggle("active");
+    });
+
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        const targetContent = mutation.target.textContent;
+
+        if (
+          (mutation.type === "characterData" ||
+            mutation.type === "childList") &&
+          targetContent !== "Select category" &&
+          selectBtnElement.innerText !== "Select category"
+        ) {
+          toast.success(`Filter changed to ${targetContent}`);
+        }
+      });
+    });
+
+    observer.observe(selectBtnElement, {
+      childList: true,
+      subtree: true,
+      characterData: true,
+    });
+  });
+
+  createEffect(() => {
     if (topics().length === 0) return;
 
     let lastClickedButton = filterList()[0];
     const items = document.querySelectorAll("[data-filter-item]");
 
+    const selectDivValue = selectValue();
+    if (selectDivValue === null) return;
+
     selectList().forEach((el) => {
       el.addEventListener("click", () => {
-        if (selectValue) {
-          selectValue.innerText = el.textContent || "Select category";
-        }
-        selectElement?.classList.remove("active");
+        selectDivValue.innerText = el.textContent || "Select category";
+        selectElement()?.classList.remove("active");
         lastClickedButton.classList.remove("active");
-
         filterFunction(el.textContent || "All", items);
         filterList().forEach((filter) => {
           if (filter.textContent === el.textContent) {
@@ -136,9 +170,7 @@ export default function Home() {
 
     filterList().forEach((el) => {
       el.addEventListener("click", () => {
-        if (selectValue) {
-          selectValue.innerText = el.textContent || "Select category";
-        }
+        selectDivValue.innerText = el.textContent || "Select category";
         filterFunction(el.textContent || "All", items);
         lastClickedButton.classList.remove("active");
         el.classList.toggle("active");
@@ -150,32 +182,9 @@ export default function Home() {
   onMount(() => {
     updateTitle("Portofolio");
 
-    selectElement?.addEventListener("click", () => {
-      selectElement?.classList.toggle("active");
-    });
-
-    const observer = new MutationObserver((mutations) => {
-      mutations.forEach((mutation) => {
-        const targetContent = mutation.target.textContent;
-
-        if (
-          (mutation.type === "characterData" ||
-            mutation.type === "childList") &&
-          targetContent !== "Select category" &&
-          selectElement?.innerText !== "Select category"
-        ) {
-          toast.success(`Filter changed to ${targetContent}`);
-        }
-      });
-    });
-
-    if (selectElement) {
-      observer.observe(selectElement, {
-        childList: true,
-        subtree: true,
-        characterData: true,
-      });
-    }
+    setTimeout(() => {
+      setLoading(false);
+    }, 200);
   });
 
   return (
@@ -186,7 +195,7 @@ export default function Home() {
 
       <section class="projects">
         <Switch>
-          <Match when={repos.loading}>
+          <Match when={repos.loading || loading()}>
             <div class="flex items-center justify-center min-h-screen">
               <div class="animate-spin rounded-full h-32 w-32 border-t-8 border-yellow-500"></div>
             </div>
@@ -239,9 +248,9 @@ export default function Home() {
               <button
                 type="button"
                 class="filter-select"
-                ref={(el) => (selectElement = el)}
+                ref={(el) => setSelectElement(el)}
               >
-                <div class="select-value" ref={(el) => (selectValue = el)}>
+                <div class="select-value" ref={(el) => setSelectValue(el)}>
                   Select category
                 </div>
 

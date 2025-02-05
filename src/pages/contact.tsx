@@ -13,6 +13,7 @@ import { API_KEY, API_URL } from "@constants/web3form";
 export default function Home() {
   const { updateTitle } = Meta.useMeta();
   const group = createFormGroup({
+    is_bot: createFormControl(false),
     access_key: createFormControl(API_KEY),
     full_name: createFormControl("", {
       required: true,
@@ -53,6 +54,8 @@ export default function Home() {
       toast.error("Please fill in the form correctly");
       return;
     }
+
+    if (group.controls.is_bot.value) return;
 
     group.markSubmitted(true);
     const toastId = toast.loading("Sending message...");
@@ -170,6 +173,7 @@ export default function Home() {
             name="message"
             class="form-input"
             placeholder="Your Message"
+            value={group.controls.message.value}
             disabled={group.isSubmitted}
             required={group.controls.message.isRequired}
             onBlur={() => group.controls.message.markTouched(true)}
@@ -180,8 +184,22 @@ export default function Home() {
                   e.currentTarget.value !== group.controls.message.value
               );
             }}
-          >{group.controls.message.value}</textarea>
+          ></textarea>
           <InputError name="Message" control={group.controls.message} />
+
+          <div class="input-wrapper-test">
+            <input
+              title="Hey we don't like bots"
+              type="checkbox"
+              name="is_bot"
+              class="form-input"
+              disabled={group.isSubmitted}
+              checked={group.controls.is_bot.value}
+              onInput={(e) =>
+                group.controls.is_bot.setValue(e.currentTarget.checked)
+              }
+            />
+          </div>
 
           <button
             class="form-btn"
