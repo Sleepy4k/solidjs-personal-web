@@ -1,41 +1,63 @@
-## Usage
+# SolidJS Personal Web
 
-Those templates dependencies are maintained via [pnpm](https://pnpm.io) via `pnpm up -Lri`.
+Basically this is my own personal website, to show who is me, my resume,
+and my portofolio, also to contact with me, this website using github API
+for request many data such as avatar, repository and much more
 
-This is the reason you see a `pnpm-lock.yaml`. That being said, any package manager will work. This file can be safely be removed once you clone a template.
+## Tech Stack
 
-```bash
-$ npm install # or pnpm install or yarn install
-```
+**Frontend:** EJS
 
-## Exploring the template
+**Backend:** Github API
 
-This template's goal is to showcase the routing features of Solid.
-It also showcase how the router and Suspense work together to parallelize data fetching tied to a route via the `.data.ts` pattern.
+**Database:** JSON File
 
-You can learn more about it on the [`@solidjs/router` repository](https://github.com/solidjs/solid-router)
+**Authentication:** -
 
-### Learn more on the [Solid Website](https://solidjs.com) and come chat with us on our [Discord](https://discord.com/invite/solidjs)
+## Run Locally
 
-## Available Scripts
+Clone the project
 
-In the project directory, you can run:
+~~~bash
+git clone https://github.com/Sleepy4k/solidjs-personal-web.git
+~~~
 
-### `npm run dev` or `npm start`
+Go to the project directory
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+~~~bash
+cd solidjs-personal-web
+~~~
 
-The page will reload if you make edits.<br>
+Install node dependencies
 
-### `npm run build`
+~~~bash
+npm install
+~~~
 
-Builds the app for production to the `dist` folder.<br>
-It correctly bundles Solid in production mode and optimizes the build for the best performance.
+Or, if you are in production mode run this command
+(don't forget to built it first)
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+~~~bash
+npm install --production
+~~~
 
-## Deployment
+Start the server
 
-You can deploy the `dist` folder to any static host provider (netlify, surge, now, etc.)
+~~~bash
+npm run dev
+~~~
+
+## Environment Variables
+
+To run this project, you will need to change your own configuration such as github url,
+web3form api key, repository and other configuration
+
+## Notes
+
+If you want to use this project, i highly recommend it for you to fork this project.
+Why? because if not then you need to setup your own repository itself and it's used
+to displaying data on this website
+
+## Feedback
+
+If you have any feedback, please make an issue with detail description, proof of concept, and node dependencies list
