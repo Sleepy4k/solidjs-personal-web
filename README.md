@@ -6,7 +6,7 @@ for request many data such as avatar, repository and much more
 
 ## Tech Stack
 
-**Frontend:** EJS
+**Frontend:** SolidJS
 
 **Backend:** Github API
 
