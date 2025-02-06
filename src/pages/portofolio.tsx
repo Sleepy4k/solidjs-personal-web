@@ -1,16 +1,18 @@
-import Meta from "@contexts/meta";
 import toast from "solid-toast";
+import Meta from "@contexts/meta";
 import Github from "@contexts/github";
+import Loader from "@components/loader";
+import { createStore } from "solid-js/store";
 import { OPENGRAPH_URL } from "@constants/github";
+import DisplayError from "@components/displayError";
 import { ITEMS_PER_PAGE } from "@constants/paginate";
 import { IoChevronDownOutline, IoEyeOutline } from "solid-icons/io";
-import Loader from "@components/loader";
-import DisplayError from "@components/displayError";
 import {
   createEffect,
   createSignal,
   For,
   Match,
+  onCleanup,
   onMount,
   Switch,
 } from "solid-js";
@@ -24,6 +26,7 @@ type TRepoList = {
 
 export default function Home() {
   const { repos } = Github.useGithub();
+  const { updateTitle } = Meta.useMeta();
   const [topics, setTopics] = createSignal<string[]>([]);
   const [repoList, setRepoList] = createSignal<TRepoList[]>([]);
   const [currentPage, setCurrentPage] = createSignal<number>(1);
@@ -32,10 +35,19 @@ export default function Home() {
   const [displayedRepoList, setDisplayedRepoList] = createSignal<TRepoList[]>(
     []
   );
+  const [isLoaded, setIsLoaded] = createStore({
+    select: false,
+    filter: false,
+  });
 
   // All the references section
   const [selectList, setSelectList] = createSignal<HTMLButtonElement[]>([]);
   const [filterList, setFilterList] = createSignal<HTMLButtonElement[]>([]);
+  const [lastClickedButton, setLastClickedButton] =
+    createSignal<HTMLButtonElement | null>(null);
+  const [filterItem, setFilterItem] = createSignal<HTMLLIElement[] | null>(
+    null
+  );
   const [selectValue, setSelectValue] = createSignal<HTMLDivElement | null>(
     null
   );
@@ -83,12 +95,18 @@ export default function Home() {
     }
   };
 
-  const { updateTitle } = Meta.useMeta();
+  const addFilterItemRef = (el: HTMLLIElement) => {
+    if (el && !filterItem()?.includes(el)) {
+      setFilterItem([...(filterItem() || []), el]);
+    }
+  };
 
   const filterFunction = (
     selectedValue: string,
-    items: NodeListOf<Element>
+    items: HTMLLIElement[] | null
   ) => {
+    if (items === null) return;
+
     items.forEach((item) => {
       handlePageChange(1);
 
@@ -116,6 +134,13 @@ export default function Home() {
       }
     });
   };
+
+  createEffect(() => {
+    if (lastClickedButton() !== null) return;
+    if (filterList().length === 0) return;
+
+    setLastClickedButton(filterList()[0]);
+  });
 
   createEffect(() => {
     const selectBtnElement = selectElement();
@@ -148,38 +173,54 @@ export default function Home() {
   });
 
   createEffect(() => {
+    if (isLoaded.select) return;
     if (topics().length === 0) return;
-
-    let lastClickedButton = filterList()[0];
-    const items = document.querySelectorAll("[data-filter-item]");
 
     const selectDivValue = selectValue();
     if (selectDivValue === null) return;
+
+    const items = filterItem();
+    if (items === null) return;
 
     selectList().forEach((el) => {
       el.addEventListener("click", () => {
         selectDivValue.innerText = el.textContent || "Select category";
         selectElement()?.classList.remove("active");
-        lastClickedButton.classList.remove("active");
+        lastClickedButton()?.classList.remove("active");
         filterFunction(el.textContent || "All", items);
         filterList().forEach((filter) => {
           if (filter.textContent === el.textContent) {
             filter.classList.add("active");
-            lastClickedButton = filter;
+            setLastClickedButton(filter);
           }
         });
       });
     });
 
+    setIsLoaded("select", true);
+  });
+
+  createEffect(() => {
+    if (isLoaded.filter) return;
+    if (topics().length === 0) return;
+
+    const selectDivValue = selectValue();
+    if (selectDivValue === null) return;
+
+    const items = filterItem();
+    if (items === null) return;
+
     filterList().forEach((el) => {
       el.addEventListener("click", () => {
         selectDivValue.innerText = el.textContent || "Select category";
         filterFunction(el.textContent || "All", items);
-        lastClickedButton.classList.remove("active");
+        lastClickedButton()?.classList.remove("active");
         el.classList.toggle("active");
-        lastClickedButton = el;
+        setLastClickedButton(el);
       });
     });
+
+    setIsLoaded("filter", true);
   });
 
   onMount(() => {
@@ -188,6 +229,11 @@ export default function Home() {
     setTimeout(() => {
       setLoading(false);
     }, 200);
+  });
+
+  onCleanup(() => {
+    selectList().forEach((el) => el.removeEventListener("click", () => {}));
+    filterList().forEach((el) => el.removeEventListener("click", () => {}));
   });
 
   return (
@@ -249,6 +295,12 @@ export default function Home() {
               </button>
 
               <ul class="select-list">
+                <li class="select-item">
+                  <button type="button" ref={addSelectListRef}>
+                    All
+                  </button>
+                </li>
+
                 <For each={topics()}>
                   {(topic) => (
                     <li class="select-item">
@@ -266,7 +318,7 @@ export default function Home() {
                 {(repo) => (
                   <li
                     class="project-item active"
-                    data-filter-item
+                    ref={addFilterItemRef}
                     data-category={repo.topics.join(", ")}
                   >
                     <a
@@ -274,7 +326,7 @@ export default function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <figure class="project-img">
+                      <figure class="project-img project-border-container">
                         <div class="project-item-icon-box">
                           <IoEyeOutline />
                         </div>
@@ -283,6 +335,8 @@ export default function Home() {
                           src={repo.openGraphImageUrl}
                           alt={repo.name}
                           loading="lazy"
+                          class="project-border-img"
+                          onError={(e) => (e.currentTarget.src = "")}
                         />
                       </figure>
 

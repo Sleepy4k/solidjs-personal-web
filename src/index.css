@@ -706,6 +706,20 @@ main {
   width: 100%;
 }
 
+.project-border-container {
+  box-sizing: "border-box";
+  height: "130px";
+  display: "flex";
+  align-items: "center";
+  justify-content: "center";
+}
+
+.project-border-img {
+  display: block;
+  max-height: 100%;
+  background-color: #333;
+}
+
 .project-img {
   position: relative;
   width: 100%;

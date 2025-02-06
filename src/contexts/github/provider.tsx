@@ -12,21 +12,24 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
   const [userData] = createResource<TGithubApiData>(
     async () => await axios(API_URL)
       .get("")
-      .then((response) => response.data),
+      .then((response) => response.data)
+      .catch(() => undefined),
     { initialValue: undefined, deferStream: true }
   );
 
   const [repos] = createResource<TGithubRepo[]>(
     async () => await axios(API_URL)
       .get("/repos")
-      .then((response) => response.data),
+      .then((response) => response.data)
+      .catch(() => []),
     { initialValue: [], deferStream: true }
   );
 
   const getDetailRepo = async (repo: string) => {
     const response = await axios(REPO_URL)
       .get(`/${repo}`)
-      .then((response) => response.data);
+      .then((response) => response.data)
+      .catch(() => undefined);
 
     return response;
   };
@@ -34,7 +37,8 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
   const getRawContent = async (repo: string, file: string, branch?: string) => {
     const response = await axios(RAW_URL)
       .get(`/${repo}/${branch ?? "main"}/${file}`)
-      .then((response) => response.data);
+      .then((response) => response.data)
+      .catch(() => undefined);
 
     return response;
   };

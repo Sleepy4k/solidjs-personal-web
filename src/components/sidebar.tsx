@@ -1,7 +1,7 @@
-import { IMAGE_URL } from "@constants/github";
-import { onCleanup, onMount } from "solid-js";
 import Github from "@contexts/github";
 import socialConfig from "@config/social";
+import { onCleanup, onMount } from "solid-js";
+import { IMAGE_URL } from "@constants/github";
 import {
   IoChevronDownSharp,
   IoLocationOutline,
@@ -32,16 +32,19 @@ export default function Sidebar() {
 
   onCleanup(() => {
     sidebarBtnElement?.removeEventListener("click", toggleSidebar);
-
-    sidebarElement = null;
-    sidebarBtnElement = null;
   });
 
   return (
     <aside class="sidebar" ref={(el) => (sidebarElement = el)} data-sidebar>
       <div class="sidebar-info">
         <figure class="avatar-box">
-          <img src={IMAGE_URL} alt="Apri Pandu W" width="80" />
+          <img
+            src={IMAGE_URL}
+            alt="Apri Pandu W"
+            width="80"
+            height="80"
+            loading="lazy"
+          />
         </figure>
 
         <div class="info-content">

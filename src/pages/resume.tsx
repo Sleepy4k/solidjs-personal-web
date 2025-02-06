@@ -1,11 +1,63 @@
+import Github from "@contexts/github";
 import Loader from "@components/loader";
 import Meta from "@contexts/meta";
-import { IoBookOutline } from "solid-icons/io";
-import { createSignal, onMount, Show } from "solid-js";
+import DisplayError from "@components/displayError";
+import { IoBookOutline, IoTrophyOutline } from "solid-icons/io";
+import {
+  RESUME_EXPERIENCE_SEPARATOR,
+  RESUME_TIMELINE_SEPARATOR,
+} from "@constants/separator";
+import { createResource, createSignal, Match, onMount, Switch } from "solid-js";
+
+type TEducation = {
+  school: string;
+  description: string;
+  time: {
+    start: string;
+    end: string;
+  };
+};
+
+type TExperience = {
+  title: string;
+  company: string;
+  description: string;
+  time: {
+    start: string;
+    end: string;
+  };
+};
+
+type TResume = {
+  education: TEducation[];
+  experience: TExperience[];
+};
 
 export default function Home() {
   const { updateTitle } = Meta.useMeta();
+  const { getRawContent } = Github.useGithub();
   const [loading, setLoading] = createSignal<boolean>(true);
+
+  const fetchResume = async (params: { username: string; repo: string }) => {
+    const rawContent = await getRawContent(params.username, params.repo);
+    return rawContent;
+  };
+
+  const [resume] = createResource<TResume | undefined>(async () => {
+    const response = await fetchResume({
+      username: "solidjs-personal-web",
+      repo: "data/resume.json",
+    });
+
+    if (!response) return undefined;
+
+    try {
+      return typeof response === "string" ? JSON.parse(response) : response;
+    } catch (error) {
+      console.error("Failed to parse resume data:", error);
+      return undefined;
+    }
+  });
 
   onMount(() => {
     updateTitle("Resume");
@@ -21,147 +73,76 @@ export default function Home() {
         <h2 class="h2 article-title">Resume</h2>
       </header>
 
-      <Show when={loading()}>
-        <Loader />
-      </Show>
+      <Switch fallback={<Loader />}>
+        <Match when={resume.loading || loading()}>
+          <Loader />
+        </Match>
 
-      <Show when={!loading()}>
-        <section class="timeline">
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <IoBookOutline />
+        <Match when={resume.error}>
+          <DisplayError message={resume.error} />
+        </Match>
+
+        <Match when={resume() === undefined}>
+          <DisplayError message="No data found" />
+        </Match>
+
+        <Match when={resume() !== undefined}>
+          <section class="timeline">
+            <div class="title-wrapper">
+              <div class="icon-box">
+                <IoBookOutline />
+              </div>
+
+              <h3 class="h3">Education</h3>
             </div>
 
-            <h3 class="h3">Education</h3>
-          </div>
+            <ol class="timeline-list">
+              {resume()?.education.map((item: TEducation) => (
+                <li class="timeline-item">
+                  <h4 class="h4 timeline-item-title">{item.school}</h4>
 
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">
-                Telkom University Purwokerto
-              </h4>
+                  <span>
+                    {`${item.time.start} ${RESUME_TIMELINE_SEPARATOR} ${item.time.end}`}
+                  </span>
 
-              <span>Sep 2023 — Present</span>
+                  <p class="timeline-text" innerHTML={item.description}></p>
+                </li>
+              ))}
+            </ol>
+          </section>
 
-              <p class="timeline-text">
-                Telkom University Purwokerto is a tertiary University managed by
-                the Telkom Education Foundation
-              </p>
-            </li>
+          <section class="timeline">
+            <div class="title-wrapper">
+              <div class="icon-box">
+                <IoTrophyOutline />
+              </div>
 
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">SMK Telkom Purwokerto</h4>
-
-              <span>Jun 2020 — Jun 2023</span>
-
-              <p class="timeline-text">
-                SMK Telkom Purwokerto is a private vocational school founded,
-                empowered and operated under the auspices of the Telkom
-                Education Foundation.
-              </p>
-            </li>
-          </ol>
-        </section>
-
-        <section class="timeline">
-          <div class="title-wrapper">
-            <div class="icon-box">
-              <IoBookOutline />
+              <h3 class="h3">Experience</h3>
             </div>
 
-            <h3 class="h3">Experience</h3>
-          </div>
+            <ol class="timeline-list">
+              {resume()?.experience.map((item: TExperience) => (
+                <li class="timeline-item">
+                  <h4
+                    class="h4 timeline-item-title"
+                    innerHTML={`${item.title} ${RESUME_EXPERIENCE_SEPARATOR} <b>${item.company}</b>`}
+                  ></h4>
 
-          <ol class="timeline-list">
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">
-                Systems Operations - AWS Cloud Club Indonesia
-              </h4>
+                  <span>
+                    {`${item.time.start} ${RESUME_TIMELINE_SEPARATOR} ${item.time.end}`}
+                  </span>
 
-              <span>Aug 2024 — Dec 2024</span>
+                  <p class="timeline-text" innerHTML={item.description}></p>
+                </li>
+              ))}
+            </ol>
+          </section>
+        </Match>
 
-              <p class="timeline-text">
-                - Gained hands-on experience in request balancing using nginx
-                <br />
-                - Gained hands-on experience in deployment web using Cloudflare
-                worker
-                <br />- Gained hands-on experience in mapping Ip address on
-                Proxmox server and Shellngn
-              </p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">DevOps Engineer - Kodegiri</h4>
-
-              <span>Aug 2024 - Nov 2024</span>
-
-              <p class="timeline-text">
-                - Gained hands-on experience in server configuration with Linux
-                kernel based on Digital Ocean Server
-                <br />
-                - Gained hands-on experience in deployment some API service such
-                as Back-end and AI service
-                <br />- Collaborated with senior developers and college to
-                discuss about deployment issues
-              </p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">
-                Backend Web Developer - Kodegiri
-              </h4>
-
-              <span>Jul 2024 - Nov 2024</span>
-
-              <p class="timeline-text">
-                - Assisted in the development of API service for classification
-                AI
-                <br />
-                - Gained hands-on experience in modular Laravel program
-                <br />- Gained hands-on experience in implementation API service
-                on Front-end from AI service and Back-end service
-              </p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">
-                Backend Web Developer - Braincode Solution
-              </h4>
-
-              <span>Mar 2023 - Jun 2023</span>
-
-              <p class="timeline-text">
-                - Assisted in the development of web applications using rust and
-                solidJS
-                <br />
-                - Gained hands-on experience in database design on PostgreSQL
-                server
-                <br />- Gained hands-on experience in server configuration with
-                Linux kernel based, including test and deploy project
-              </p>
-            </li>
-
-            <li class="timeline-item">
-              <h4 class="h4 timeline-item-title">
-                Fullstack Web Developer - PuskoMedia Indonesia Kreatif
-              </h4>
-
-              <span>Feb 2022 — Sep 2022</span>
-
-              <p class="timeline-text">
-                - Assisted in the development of web applications using Laravel
-                and gained hands-on experience in database design and
-                optimization techniques
-                <br />
-                - Gained hands-on experience in database design and optimization
-                techniques using ORM and Builder
-                <br />- Gained hands-on experience in server configuration with
-                Linux kernel based, including firewall and project deployment
-              </p>
-            </li>
-          </ol>
-        </section>
-      </Show>
+        <Match when={true}>
+          <DisplayError message="Something went wrong while displaying data" />
+        </Match>
+      </Switch>
     </article>
   );
 }
