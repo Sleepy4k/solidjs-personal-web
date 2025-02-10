@@ -6,7 +6,7 @@ import solidPlugin from 'vite-plugin-solid';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
-  base: '',
+  base: '', // change this based on your root url path
   plugins: [solidPlugin()],
   resolve: {
     alias: {
@@ -27,8 +27,5 @@ export default defineConfig({
   },
   build: {
     target: 'esnext',
-  },
-  optimizeDeps: {
-    include: ['solid-markdown > micromark', 'solid-markdown > unified'],
   },
 });
