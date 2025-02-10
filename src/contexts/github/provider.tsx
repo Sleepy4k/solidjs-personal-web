@@ -13,16 +13,14 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
     async () => await axios(API_URL)
       .get("")
       .then((response) => response.data)
-      .catch(() => undefined),
-    { initialValue: undefined, deferStream: true }
+      .catch(() => undefined)
   );
 
   const [repos] = createResource<TGithubRepo[]>(
     async () => await axios(API_URL)
       .get("/repos")
       .then((response) => response.data)
-      .catch(() => []),
-    { initialValue: [], deferStream: true }
+      .catch(() => [])
   );
 
   const getDetailRepo = async (repo: string) => {

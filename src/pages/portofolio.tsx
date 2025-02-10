@@ -41,6 +41,7 @@ export default function Home() {
   });
 
   // All the references section
+  let observer: MutationObserver;
   const [selectList, setSelectList] = createSignal<HTMLButtonElement[]>([]);
   const [filterList, setFilterList] = createSignal<HTMLButtonElement[]>([]);
   const [lastClickedButton, setLastClickedButton] =
@@ -150,7 +151,7 @@ export default function Home() {
       selectBtnElement.classList.toggle("active");
     });
 
-    const observer = new MutationObserver((mutations) => {
+    observer = new MutationObserver((mutations) => {
       mutations.forEach((mutation) => {
         const targetContent = mutation.target.textContent;
 
@@ -232,6 +233,7 @@ export default function Home() {
   });
 
   onCleanup(() => {
+    observer.disconnect();
     selectList().forEach((el) => el.removeEventListener("click", () => {}));
     filterList().forEach((el) => el.removeEventListener("click", () => {}));
   });
@@ -326,7 +328,7 @@ export default function Home() {
                       target="_blank"
                       rel="noopener noreferrer"
                     >
-                      <figure class="project-img project-border-container">
+                      <figure class="project-img">
                         <div class="project-item-icon-box">
                           <IoEyeOutline />
                         </div>

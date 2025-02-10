@@ -23,33 +23,27 @@ const App: Component = () => {
     });
   });
 
+  const routerCallback = (props: RouteSectionProps) => (
+    <Suspense fallback={<Loader />}>
+      <Meta.Provider>
+        <Github.Provider>
+          <Sidebar />
+          <div class="main-content">
+            <Navbar />
+            {props.children}
+          </div>
+        </Github.Provider>
+      </Meta.Provider>
+    </Suspense>
+  );
+
   return (
-    <MetaProvider>
-      <main>
-        <Router
-          root={(props: RouteSectionProps) => (
-            <Suspense fallback={<Loader />}>
-              <Meta.Provider>
-                <Github.Provider>
-                  <Toaster
-                    gutter={8}
-                    position="top-right"
-                    toastOptions={toastConfig}
-                  />
-                  <Sidebar />
-                  <div class="main-content">
-                    <Navbar />
-                    {props.children}
-                  </div>
-                </Github.Provider>
-              </Meta.Provider>
-            </Suspense>
-          )}
-        >
-          {routes}
-        </Router>
-      </main>
-    </MetaProvider>
+    <main>
+      <Toaster gutter={8} toastOptions={toastConfig} />
+      <MetaProvider>
+        <Router root={routerCallback}>{routes}</Router>
+      </MetaProvider>
+    </main>
   );
 };
 
