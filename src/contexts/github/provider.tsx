@@ -1,6 +1,6 @@
 import axios from "@services/axios";
 import GithubContext from "./context";
-import { API_URL, RAW_URL, REPO_URL } from "@constants/github";
+import { API_URL, RAW_URL, REPO_PER_PAGE, REPO_URL } from "@constants/github";
 import type { TGithubApiData, TGithubRepo } from "@interfaces/githubApiData";
 import { Component, createMemo, createResource, JSXElement } from "solid-js";
 
@@ -18,7 +18,7 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
 
   const [repos] = createResource<TGithubRepo[]>(
     async () => await axios(API_URL)
-      .get("/repos")
+      .get(`/repos?per_page=${REPO_PER_PAGE}`)
       .then((response) => response.data)
       .catch(() => [])
   );

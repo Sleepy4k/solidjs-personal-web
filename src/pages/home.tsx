@@ -1,6 +1,9 @@
 import Meta from "@contexts/meta";
 import Github from "@contexts/github";
 import Loader from "@components/loader";
+import sanitizeHtml from "sanitize-html";
+import githubConfig from "@config/github";
+import sanitizeConfig from "@config/sanitize";
 import DisplayError from "@components/displayError";
 import {
   createResource,
@@ -11,23 +14,30 @@ import {
   createSignal,
 } from "solid-js";
 
+type TFetchParams = {
+  file: string;
+  repo: string;
+  branch: string;
+};
+
 export default function Home() {
   const { updateTitle } = Meta.useMeta();
   const { getRawContent } = Github.useGithub();
   const [hostElement, setHostElement] = createSignal<HTMLDivElement | null>(
-    null
+    null,
   );
 
-  const fetchReadme = async (params: { username: string; repo: string }) => {
-    const rawContent = await getRawContent(params.username, params.repo);
+  const fetchReadme = async (params: TFetchParams) => {
+    const rawContent = await getRawContent(
+      params.repo,
+      params.file,
+      params.branch,
+    );
     return rawContent;
   };
 
   const [readme] = createResource(async () => {
-    const response = await fetchReadme({
-      username: "sleepy4k",
-      repo: "README.md",
-    });
+    const response = await fetchReadme(githubConfig.home);
 
     if (!response) return;
 
@@ -41,7 +51,7 @@ export default function Home() {
     if (parent === null) return;
 
     const shadowRoot = parent.attachShadow({ mode: "open" });
-    shadowRoot.innerHTML = readme() || "";
+    shadowRoot.innerHTML = sanitizeHtml(readme() || "", sanitizeConfig);
   });
 
   onMount(() => {

@@ -1,6 +1,7 @@
+import Meta from "@contexts/meta";
 import Github from "@contexts/github";
 import Loader from "@components/loader";
-import Meta from "@contexts/meta";
+import githubConfig from "@config/github";
 import DisplayError from "@components/displayError";
 import { IoBookOutline, IoTrophyOutline } from "solid-icons/io";
 import {
@@ -33,21 +34,24 @@ type TResume = {
   experience: TExperience[];
 };
 
+type TFetchParams = {
+  file: string;
+  repo: string;
+  branch: string;
+};
+
 export default function Home() {
   const { updateTitle } = Meta.useMeta();
   const { getRawContent } = Github.useGithub();
   const [loading, setLoading] = createSignal<boolean>(true);
 
-  const fetchResume = async (params: { username: string; repo: string }) => {
-    const rawContent = await getRawContent(params.username, params.repo);
+  const fetchResume = async (params: TFetchParams) => {
+    const rawContent = await getRawContent(params.repo, params.file, params.branch);
     return rawContent;
   };
 
   const [resume] = createResource<TResume | undefined>(async () => {
-    const response = await fetchResume({
-      username: "solidjs-personal-web",
-      repo: "data/resume.json",
-    });
+    const response = await fetchResume(githubConfig.resume);
 
     if (!response) return undefined;
 

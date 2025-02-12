@@ -9,6 +9,7 @@ import { ITEMS_PER_PAGE } from "@constants/paginate";
 import { IoChevronDownOutline, IoEyeOutline } from "solid-icons/io";
 import {
   createEffect,
+  createMemo,
   createSignal,
   For,
   Match,
@@ -33,7 +34,7 @@ export default function Home() {
   const [totalPages, setTotalPages] = createSignal<number>(1);
   const [loading, setLoading] = createSignal<boolean>(true);
   const [displayedRepoList, setDisplayedRepoList] = createSignal<TRepoList[]>(
-    []
+    [],
   );
   const [isLoaded, setIsLoaded] = createStore({
     select: false,
@@ -47,10 +48,10 @@ export default function Home() {
   const [lastClickedButton, setLastClickedButton] =
     createSignal<HTMLButtonElement | null>(null);
   const [filterItem, setFilterItem] = createSignal<HTMLLIElement[] | null>(
-    null
+    null,
   );
   const [selectValue, setSelectValue] = createSignal<HTMLDivElement | null>(
-    null
+    null,
   );
   const [selectElement, setSelectElement] =
     createSignal<HTMLButtonElement | null>(null);
@@ -104,7 +105,7 @@ export default function Home() {
 
   const filterFunction = (
     selectedValue: string,
-    items: HTMLLIElement[] | null
+    items: HTMLLIElement[] | null,
   ) => {
     if (items === null) return;
 
@@ -127,7 +128,7 @@ export default function Home() {
 
         // set displayedRepoList based on the selected category
         const filteredRepoList = repoList().filter((repo) =>
-          repo.topics.includes(selectedValue)
+          repo.topics.includes(selectedValue),
         );
 
         setTotalPages(Math.ceil(filteredRepoList.length / ITEMS_PER_PAGE));
@@ -238,10 +239,17 @@ export default function Home() {
     filterList().forEach((el) => el.removeEventListener("click", () => {}));
   });
 
+  const memoizedTitle = createMemo(() => {
+    const repo = repos();
+    if (!repo || repo.length === 0) return "Portofolio";
+
+    return `Portofolio (${repo.length} Data)`;
+  });
+
   return (
     <article class="portofolio active">
       <header>
-        <h2 class="h2 article-title">Portofolio</h2>
+        <h2 class="h2 article-title">{memoizedTitle()}</h2>
       </header>
 
       <section class="projects">

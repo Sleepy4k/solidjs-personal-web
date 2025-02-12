@@ -141,7 +141,7 @@ export default function Home() {
                 group.controls.full_name.setValue(e.currentTarget.value);
                 group.controls.full_name.markDirty(
                   e.currentTarget.value !== "" ||
-                    e.currentTarget.value !== group.controls.full_name.value
+                    e.currentTarget.value !== group.controls.full_name.value,
                 );
               }}
             />
@@ -162,7 +162,7 @@ export default function Home() {
                 group.controls.email.setValue(e.currentTarget.value);
                 group.controls.email.markDirty(
                   e.currentTarget.value !== "" ||
-                    e.currentTarget.value !== group.controls.email.value
+                    e.currentTarget.value !== group.controls.email.value,
                 );
               }}
             />
@@ -181,7 +181,7 @@ export default function Home() {
               group.controls.message.setValue(e.currentTarget.value);
               group.controls.message.markDirty(
                 e.currentTarget.value !== "" ||
-                  e.currentTarget.value !== group.controls.message.value
+                  e.currentTarget.value !== group.controls.message.value,
               );
             }}
           ></textarea>

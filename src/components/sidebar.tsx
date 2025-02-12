@@ -1,7 +1,8 @@
+import appConfig from "@config/app";
 import Github from "@contexts/github";
 import socialConfig from "@config/social";
-import { onCleanup, onMount } from "solid-js";
 import { IMAGE_URL } from "@constants/github";
+import { onCleanup, onMount, Show } from "solid-js";
 import {
   IoChevronDownSharp,
   IoLocationOutline,
@@ -17,6 +18,8 @@ export default function Sidebar() {
   let sidebarBtnElement: HTMLElement | null = null;
 
   const { userData } = Github.useGithub();
+  const dummyProfileImage =
+    "https://free.clipartof.com/855-Free-Clipart-Of-A-Male-Avatar.png";
 
   const toggleSidebar = () => {
     sidebarElement?.classList.toggle("active");
@@ -39,8 +42,8 @@ export default function Sidebar() {
       <div class="sidebar-info">
         <figure class="avatar-box">
           <img
-            src={IMAGE_URL}
-            alt="Apri Pandu W"
+            src={IMAGE_URL || dummyProfileImage}
+            alt={appConfig.name}
             width="80"
             height="80"
             loading="lazy"
@@ -48,8 +51,8 @@ export default function Sidebar() {
         </figure>
 
         <div class="info-content">
-          <h1 class="name" title="Apri Pandu W">
-            {userData()?.name || "Apri Pandu W"}
+          <h1 class="name" title={appConfig.name}>
+            {userData()?.name || appConfig.name}
           </h1>
 
           <p class="title">
@@ -73,91 +76,103 @@ export default function Sidebar() {
         <div class="separator"></div>
 
         <ul class="contacts-list">
-          <li class="contact-item">
-            <div class="icon-box">
-              <IoMailOpenOutline />
-            </div>
+          <Show
+            when={
+              (userData() !== undefined && userData()?.email) ||
+              (socialConfig !== undefined && socialConfig?.email)
+            }
+          >
+            <li class="contact-item">
+              <div class="icon-box">
+                <IoMailOpenOutline />
+              </div>
 
-            <div class="contact-info">
-              <p class="contact-title">Email</p>
+              <div class="contact-info">
+                <p class="contact-title">Email</p>
 
-              <a
-                href={`mailto:${
-                  userData()?.email || "sarahpalastrin@gmail.com"
-                }`}
-                class="contact-link"
-              >
-                {userData()?.email || "sarahpalastrin@gmail.com"}
-              </a>
-            </div>
-          </li>
+                <a
+                  href={`mailto:${userData()?.email || socialConfig?.email}`}
+                  class="contact-link"
+                >
+                  {userData()?.email || socialConfig?.email}
+                </a>
+              </div>
+            </li>
+          </Show>
 
-          <li class="contact-item">
-            <div class="icon-box">
-              <IoLocationOutline />
-            </div>
+          <Show when={userData() !== undefined && userData()?.location}>
+            <li class="contact-item">
+              <div class="icon-box">
+                <IoLocationOutline />
+              </div>
 
-            <div class="contact-info">
-              <p class="contact-title">Location</p>
+              <div class="contact-info">
+                <p class="contact-title">Location</p>
 
-              <address>
-                {userData()?.location ||
-                  "Banyumas Regency, Jawa Tengah, Indonesia"}
-              </address>
-            </div>
-          </li>
+                <address>{userData()?.location || ""}</address>
+              </div>
+            </li>
+          </Show>
         </ul>
 
         <div class="separator"></div>
 
         <ul class="social-list">
-          <li class="social-item">
-            <a
-              title="Linkedin Profile"
-              href={socialConfig.linkedin}
-              target="_blank"
-              rel="noopener"
-              class="social-link"
-            >
-              <IoLogoLinkedin />
-            </a>
-          </li>
+          <Show when={socialConfig !== undefined && socialConfig?.linkedin}>
+            <li class="social-item">
+              <a
+                title="Linkedin Profile"
+                href={socialConfig.linkedin}
+                target="_blank"
+                rel="noopener"
+                class="social-link"
+              >
+                <IoLogoLinkedin />
+              </a>
+            </li>
+          </Show>
 
-          <li class="social-item">
-            <a
-              title="Github Profile"
-              href={socialConfig.github}
-              target="_blank"
-              rel="noopener"
-              class="social-link"
-            >
-              <IoLogoGithub />
-            </a>
-          </li>
+          <Show when={socialConfig !== undefined && socialConfig?.github}>
+            <li class="social-item">
+              <a
+                title="Github Profile"
+                href={socialConfig.github}
+                target="_blank"
+                rel="noopener"
+                class="social-link"
+              >
+                <IoLogoGithub />
+              </a>
+            </li>
+          </Show>
 
-          <li class="social-item">
-            <a
-              title="Twitter Account"
-              href={socialConfig.twitter}
-              target="_blank"
-              rel="noopener"
-              class="social-link"
-            >
-              <IoLogoTwitter />
-            </a>
-          </li>
+          <Show when={socialConfig !== undefined && socialConfig?.twitter}>
+            <li class="social-item">
+              <a
+                title="Twitter Account"
+                href={socialConfig.twitter}
+                target="_blank"
+                rel="noopener"
+                class="social-link"
+              >
+                <IoLogoTwitter />
+              </a>
+            </li>
+          </Show>
 
-          <li class="social-item">
-            <a
-              title="Instagram Account"
-              href={socialConfig.instagram}
-              target="_blank"
-              rel="noopener"
-              class="social-link"
-            >
-              <IoLogoInstagram />
-            </a>
-          </li>
+          <Show when={socialConfig !== undefined && socialConfig?.instagram}>
+            <li class="social-item">
+              <a
+                title="Instagram Account"
+                href={socialConfig.instagram}
+                target="_blank"
+                rel="noopener"
+                class="social-link"
+              >
+                <IoLogoInstagram />
+              </a>
+            </li>
+          </Show>
         </ul>
       </div>
     </aside>
