@@ -16,7 +16,6 @@
   "license": "MIT",
   "devDependencies": {
     "@types/node": "^22.13.0",
-    "@types/sanitize-html": "^2.13.0",
     "@typescript-eslint/eslint-plugin": "^8.24.0",
     "@typescript-eslint/parser": "^8.24.0",
     "autoprefixer": "^10.4.20",
@@ -38,7 +37,6 @@
     "@solidjs/meta": "^0.29.4",
     "@solidjs/router": "^0.15.1",
     "axios": "^1.7.9",
-    "sanitize-html": "^2.14.0",
     "solid-forms": "^0.5.2",
     "solid-icons": "^1.1.0",
     "solid-js": "^1.9.3",
