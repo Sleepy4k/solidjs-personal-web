@@ -1,9 +1,7 @@
 import Meta from "@contexts/meta";
 import Github from "@contexts/github";
 import Loader from "@components/loader";
-import sanitizeHtml from "sanitize-html";
 import githubConfig from "@config/github";
-import sanitizeConfig from "@config/sanitize";
 import DisplayError from "@components/displayError";
 import {
   createResource,
@@ -51,7 +49,7 @@ export default function Home() {
     if (parent === null) return;
 
     const shadowRoot = parent.attachShadow({ mode: "open" });
-    shadowRoot.innerHTML = sanitizeHtml(readme() || "", sanitizeConfig);
+    shadowRoot.innerHTML = readme() || "";
   });
 
   onMount(() => {
