@@ -1,6 +1,6 @@
 import axios, { type AxiosInstance } from "axios";
 
-export default function(host: string, ...args: any): AxiosInstance {
+export default function (host: string, ...args: any): AxiosInstance {
   const defaultHeaders = {
     "Content-Type": "application/json",
     "Accept": "application/json",

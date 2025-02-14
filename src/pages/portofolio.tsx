@@ -246,6 +246,102 @@ export default function Home() {
     return `Portofolio (${repo.length} Data)`;
   });
 
+  const FilterSection = createMemo(() => {
+    return (
+      <>
+        <ul class="filter-list">
+          <li class="filter-item">
+            <button type="button" class="active" ref={addFilterListRef}>
+              All
+            </button>
+          </li>
+
+          <For each={topics()}>
+            {(topic) => (
+              <li class="filter-item">
+                <button type="button" ref={addFilterListRef}>
+                  {topic}
+                </button>
+              </li>
+            )}
+          </For>
+        </ul>
+
+        <div class="filter-select-box">
+          <button
+            type="button"
+            class="filter-select"
+            ref={(el) => setSelectElement(el)}
+          >
+            <div class="select-value" ref={(el) => setSelectValue(el)}>
+              Select category
+            </div>
+
+            <div class="select-icon">
+              <IoChevronDownOutline />
+            </div>
+          </button>
+
+          <ul class="select-list">
+            <li class="select-item">
+              <button type="button" ref={addSelectListRef}>
+                All
+              </button>
+            </li>
+
+            <For each={topics()}>
+              {(topic) => (
+                <li class="select-item">
+                  <button type="button" ref={addSelectListRef}>
+                    {topic}
+                  </button>
+                </li>
+              )}
+            </For>
+          </ul>
+        </div>
+      </>
+    );
+  });
+
+  const PaginationSection = createMemo(() => {
+    return (
+      <div class="pagination">
+        <button
+          type="button"
+          onClick={() => handlePageChange(Math.max(1, currentPage() - 1))}
+          disabled={currentPage() === 1}
+        >
+          Previous
+        </button>
+        <For each={Array.from({ length: totalPages() })}>
+          {(_, index) => {
+            const pageNumber = index() + 1;
+
+            return (
+              <button
+                type="button"
+                onClick={() => handlePageChange(pageNumber)}
+                class={currentPage() === pageNumber ? "active" : ""}
+              >
+                {pageNumber}
+              </button>
+            );
+          }}
+        </For>
+        <button
+          type="button"
+          onClick={() =>
+            handlePageChange(Math.min(totalPages(), currentPage() + 1))
+          }
+          disabled={currentPage() === totalPages()}
+        >
+          Next
+        </button>
+      </div>
+    );
+  });
+
   return (
     <article class="portofolio active">
       <header>
@@ -271,57 +367,7 @@ export default function Home() {
           </Match>
 
           <Match when={true}>
-            <ul class="filter-list">
-              <li class="filter-item">
-                <button type="button" class="active" ref={addFilterListRef}>
-                  All
-                </button>
-              </li>
-
-              <For each={topics()}>
-                {(topic) => (
-                  <li class="filter-item">
-                    <button type="button" ref={addFilterListRef}>
-                      {topic}
-                    </button>
-                  </li>
-                )}
-              </For>
-            </ul>
-
-            <div class="filter-select-box">
-              <button
-                type="button"
-                class="filter-select"
-                ref={(el) => setSelectElement(el)}
-              >
-                <div class="select-value" ref={(el) => setSelectValue(el)}>
-                  Select category
-                </div>
-
-                <div class="select-icon">
-                  <IoChevronDownOutline />
-                </div>
-              </button>
-
-              <ul class="select-list">
-                <li class="select-item">
-                  <button type="button" ref={addSelectListRef}>
-                    All
-                  </button>
-                </li>
-
-                <For each={topics()}>
-                  {(topic) => (
-                    <li class="select-item">
-                      <button type="button" ref={addSelectListRef}>
-                        {topic}
-                      </button>
-                    </li>
-                  )}
-                </For>
-              </ul>
-            </div>
+            <FilterSection />
 
             <ul class="project-list">
               <For each={displayedRepoList()}>
@@ -361,39 +407,7 @@ export default function Home() {
               </For>
             </ul>
 
-            <div class="pagination">
-              <button
-                type="button"
-                onClick={() => handlePageChange(Math.max(1, currentPage() - 1))}
-                disabled={currentPage() === 1}
-              >
-                Previous
-              </button>
-              <For each={Array.from({ length: totalPages() })}>
-                {(_, index) => {
-                  const pageNumber = index() + 1;
-
-                  return (
-                    <button
-                      type="button"
-                      onClick={() => handlePageChange(pageNumber)}
-                      class={currentPage() === pageNumber ? "active" : ""}
-                    >
-                      {pageNumber}
-                    </button>
-                  );
-                }}
-              </For>
-              <button
-                type="button"
-                onClick={() =>
-                  handlePageChange(Math.min(totalPages(), currentPage() + 1))
-                }
-                disabled={currentPage() === totalPages()}
-              >
-                Next
-              </button>
-            </div>
+            <PaginationSection />
           </Match>
         </Switch>
       </section>

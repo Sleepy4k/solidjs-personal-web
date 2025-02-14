@@ -1,4 +1,5 @@
 import Meta from "@contexts/meta";
+import DOMPurify from "dompurify";
 import Github from "@contexts/github";
 import Loader from "@components/loader";
 import githubConfig from "@config/github";
@@ -46,10 +47,10 @@ export default function Home() {
 
   createEffect(() => {
     const parent = hostElement();
-    if (parent === null) return;
-
-    const shadowRoot = parent.attachShadow({ mode: "open" });
-    shadowRoot.innerHTML = readme() || "";
+    if (parent) {
+      const shadowRoot = parent.attachShadow({ mode: "open" });
+      shadowRoot.innerHTML = DOMPurify.sanitize(readme() || "");
+    }
   });
 
   onMount(() => {
@@ -78,10 +79,6 @@ export default function Home() {
 
           <Match when={readme() !== undefined}>
             <div class="injected-readme" ref={(el) => setHostElement(el)}></div>
-          </Match>
-
-          <Match when={true}>
-            <DisplayError message="Something went wrong while displaying data" />
           </Match>
         </Switch>
       </section>

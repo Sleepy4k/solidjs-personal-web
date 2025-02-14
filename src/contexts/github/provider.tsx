@@ -10,17 +10,19 @@ type GithubProviderProps = {
 
 const GithubProvider: Component<GithubProviderProps> = (props) => {
   const [userData] = createResource<TGithubApiData>(
-    async () => await axios(API_URL)
-      .get("")
-      .then((response) => response.data)
-      .catch(() => undefined)
+    async () =>
+      await axios(API_URL)
+        .get("")
+        .then((response) => response.data)
+        .catch(() => undefined),
   );
 
   const [repos] = createResource<TGithubRepo[]>(
-    async () => await axios(API_URL)
-      .get(`/repos?per_page=${REPO_PER_PAGE}`)
-      .then((response) => response.data)
-      .catch(() => [])
+    async () =>
+      await axios(API_URL)
+        .get(`/repos?per_page=${REPO_PER_PAGE}`)
+        .then((response) => response.data)
+        .catch(() => []),
   );
 
   const getDetailRepo = async (repo: string) => {

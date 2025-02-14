@@ -46,7 +46,11 @@ export default function Home() {
   const [loading, setLoading] = createSignal<boolean>(true);
 
   const fetchResume = async (params: TFetchParams) => {
-    const rawContent = await getRawContent(params.repo, params.file, params.branch);
+    const rawContent = await getRawContent(
+      params.repo,
+      params.file,
+      params.branch,
+    );
     return rawContent;
   };
 
