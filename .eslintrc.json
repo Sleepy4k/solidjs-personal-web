@@ -2,8 +2,6 @@
   "env": { "browser": true },
   "extends": [
     "eslint:recommended",
-    "airbnb-base",
-    "airbnb-typescript/base",
     "plugin:@typescript-eslint/recommended",
     "plugin:@typescript-eslint/recommended-requiring-type-checking",
     "plugin:@typescript-eslint/strict",
