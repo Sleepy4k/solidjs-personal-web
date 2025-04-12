@@ -1,9 +1,10 @@
 import Meta from "@contexts/meta";
 import Github from "@contexts/github";
 import Loader from "@components/loader";
-import { OPENGRAPH_URL, REPO_PER_PAGE } from "@constants/github";
 import DisplayError from "@components/displayError";
-import { IoEyeOutline } from "solid-icons/io";
+import { REPO_FILTER_LIST } from "@constants/repoFilter";
+import { OPENGRAPH_URL, REPO_PER_PAGE } from "@constants/github";
+import { IoChevronDownOutline, IoEyeOutline } from "solid-icons/io";
 import {
   createEffect,
   createMemo,
@@ -22,8 +23,15 @@ type TRepoList = {
 };
 
 export default function Home() {
-  const { userData, repos, repoInfo, setCurrentRepoPage } = Github.useGithub();
   const { updateTitle } = Meta.useMeta();
+  const {
+    userData,
+    repos,
+    repoInfo,
+    setCurrentRepoPage,
+    setCurrentRepoFilter,
+    currentRepoFilter,
+  } = Github.useGithub();
   const [repoList, setRepoList] = createSignal<TRepoList[]>([]);
   const [currentPage, setCurrentPage] = createSignal<number>(1);
   const [totalPages, setTotalPages] = createSignal<number>(1);
@@ -64,6 +72,59 @@ export default function Home() {
     if (!totalRepo || totalRepo === 0) return "Portofolio";
 
     return `Portofolio (${totalRepo} Data)`;
+  });
+
+  const updateFilter = (filter: string) => {
+    setCurrentRepoFilter(filter);
+    repoInfo.refetch();
+  };
+
+  const FilterSection = createMemo(() => {
+    return (
+      <>
+        <ul class="filter-list">
+          <For each={REPO_FILTER_LIST}>
+            {(topic) => (
+              <li class="filter-item">
+                <button
+                  type="button"
+                  class={`${currentRepoFilter() === topic.value ? "active" : ""}`}
+                  onClick={() => updateFilter(topic.value)}
+                >
+                  {topic.name}
+                </button>
+              </li>
+            )}
+          </For>
+        </ul>
+
+        <div class="filter-select-box">
+          <button type="button" class="filter-select">
+            <div class="select-value">Select category</div>
+
+            <div class="select-icon">
+              <IoChevronDownOutline />
+            </div>
+          </button>
+
+          <ul class="select-list">
+            <For each={REPO_FILTER_LIST}>
+              {(topic) => (
+                <li class="select-item">
+                  <button
+                    type="button"
+                    class={`${currentRepoFilter() === topic.value ? "active" : ""}`}
+                    onClick={() => updateFilter(topic.value)}
+                  >
+                    {topic.name}
+                  </button>
+                </li>
+              )}
+            </For>
+          </ul>
+        </div>
+      </>
+    );
   });
 
   const PaginationSection = createMemo(() => {
@@ -123,6 +184,8 @@ export default function Home() {
           </Match>
 
           <Match when={true}>
+            <FilterSection />
+
             <ul class="project-list">
               <For each={repoList()}>
                 {(repo) => (

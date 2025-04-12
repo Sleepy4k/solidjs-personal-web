@@ -4,11 +4,11 @@ import Loader from "@components/loader";
 import githubConfig from "@config/github";
 import DisplayError from "@components/displayError";
 import { IoBookOutline, IoTrophyOutline } from "solid-icons/io";
+import { createResource, createSignal, Match, onMount, Switch } from "solid-js";
 import {
   RESUME_EXPERIENCE_SEPARATOR,
   RESUME_TIMELINE_SEPARATOR,
 } from "@constants/separator";
-import { createResource, createSignal, Match, onMount, Switch } from "solid-js";
 
 type TEducation = {
   school: string;
@@ -110,7 +110,9 @@ export default function Home() {
                   <h4
                     class="h4 timeline-item-title"
                     innerHTML={`<b>${item.school}</b>`}
-                  > </h4>
+                  >
+                    {" "}
+                  </h4>
 
                   <span>
                     {`${item.time.start} ${RESUME_TIMELINE_SEPARATOR} ${item.time.end}`}
