@@ -15,8 +15,8 @@ importers:
         specifier: ^0.15.1
         version: 0.15.1(solid-js@1.9.3)
       axios:
-        specifier: ^1.7.9
-        version: 1.8.4
+        specifier: ^1.8.2
+        version: 1.8.2
       dompurify:
         specifier: ^3.2.4
         version: 3.2.5
@@ -703,8 +703,8 @@ packages:
     peerDependencies:
       postcss: ^8.1.0
 
-  axios@1.8.4:
-    resolution: {integrity: sha512-eBSYY4Y68NNlHbHBMdeDmKNtDgXWhQsJcGqzO3iLUM0GraQFSS9cVgPX5I9b3lbdFKyYoAEGAZF1DwhTaljNAw==}
+  axios@1.8.2:
+    resolution: {integrity: sha512-ls4GYBm5aig9vWx8AWDSGLpnpDQRtWAfrjU+EuytuODrFBkqesN2RkOQCBzrA1RQNHw1SmRMSDDDSwzNAYQ6Rg==}
 
   babel-plugin-jsx-dom-expressions@0.37.13:
     resolution: {integrity: sha512-oAEMMIgU0h1DmHn4ZDaBBFc08nsVJciLq9pF7g0ZdpeIDKfY4zXjXr8+/oBjKhXG8nyomhnTodPjeG+/ZXcWXQ==}
@@ -2408,7 +2408,7 @@ snapshots:
       postcss: 8.4.49
       postcss-value-parser: 4.2.0
 
-  axios@1.8.4:
+  axios@1.8.2:
     dependencies:
       follow-redirects: 1.15.9
       form-data: 4.0.2
@@ -3329,7 +3329,7 @@ snapshots:
     dependencies:
       '@solidjs/meta': 0.29.4(solid-js@1.9.3)
       '@solidjs/router': 0.15.1(solid-js@1.9.3)
-      axios: 1.8.4
+      axios: 1.8.2
       dompurify: 3.2.5
       solid-forms: 0.5.2(solid-js@1.9.3)
       solid-icons: 1.1.0(solid-js@1.9.3)
