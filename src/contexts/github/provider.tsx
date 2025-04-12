@@ -2,13 +2,14 @@ import axios from "@services/axios";
 import GithubContext from "./context";
 import { API_URL, RAW_URL, REPO_PER_PAGE, REPO_URL } from "@constants/github";
 import type { TGithubApiData, TGithubRepo } from "@interfaces/githubApiData";
-import { Component, createMemo, createResource, JSXElement } from "solid-js";
+import { Component, createMemo, createResource, createSignal, JSXElement } from "solid-js";
 
 type GithubProviderProps = {
   children: JSXElement;
 };
 
 const GithubProvider: Component<GithubProviderProps> = (props) => {
+  const [currentRepoPage, setCurrentRepoPage] = createSignal<number>(1);
   const [userData] = createResource<TGithubApiData>(
     async () =>
       await axios(API_URL)
@@ -17,10 +18,10 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
         .catch(() => undefined),
   );
 
-  const [repos] = createResource<TGithubRepo[]>(
+  const [repos, repoInfo] = createResource<TGithubRepo[]>(
     async () =>
       await axios(API_URL)
-        .get(`/repos?per_page=${REPO_PER_PAGE}`)
+        .get(`/repos?per_page=${REPO_PER_PAGE}&page=${currentRepoPage()}`)
         .then((response) => response.data)
         .catch(() => []),
   );
@@ -46,8 +47,11 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
   const contextValue = createMemo(() => ({
     userData,
     repos,
+    repoInfo,
     getDetailRepo,
     getRawContent,
+    setCurrentRepoPage,
+    currentRepoPage
   }));
 
   return (

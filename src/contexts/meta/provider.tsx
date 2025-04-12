@@ -58,13 +58,8 @@ const MetaProvider: Component<MetaProviderProps> = (props) => {
       <StaticMeta />
       <MetaContext.Provider value={contextValue()}>
         <Title>{memoizedTitle()}</Title>
-        <Meta name="description" content={memoizedDescription()} />
         <Meta property="og:title" content={memoizedTitle()} />
-        <Meta property="og:description" content={memoizedDescription()} />
-        <Meta property="og:image" content={memoizedImage()} />
         <Meta name="twitter:title" content={memoizedTitle()} />
-        <Meta name="twitter:description" content={memoizedDescription()} />
-        <Meta name="twitter:image" content={memoizedImage()} />
 
         {props.children}
       </MetaContext.Provider>
