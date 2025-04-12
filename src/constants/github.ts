@@ -12,7 +12,7 @@ const RAW_URL: string = `https://raw.githubusercontent.com/${username}`;
 
 const OPENGRAPH_URL: string = `https://opengraph.githubassets.com/36005f3e368256194ca27e7d61ff2c7d6824a97fc252d06cba692104213e7e05/${username}`;
 
-const REPO_PER_PAGE: number = 100;
+const REPO_PER_PAGE: number = 9;
 
 export {
   IMAGE_URL,
