@@ -1,9 +1,8 @@
 /* @refresh reload */
 import "./index.css";
 
-import { isDev, isServer, render } from "solid-js/web";
-
 import App from "@/app";
+import { isDev, isServer, render } from "solid-js/web";
 
 let root = document.getElementById("root");
 
