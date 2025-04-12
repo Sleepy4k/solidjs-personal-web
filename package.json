@@ -35,14 +35,14 @@
   },
   "dependencies": {
     "@solidjs/meta": "^0.29.4",
-    "@solidjs/router": "^0.15.1",
-    "axios": "^1.8.2",
-    "dompurify": "^3.2.4",
+    "@solidjs/router": "^0.15.3",
+    "axios": "^1.8.4",
+    "dompurify": "^3.2.5",
     "solid-forms": "^0.5.2",
     "solid-icons": "^1.1.0",
-    "solid-js": "^1.9.3",
+    "solid-js": "^1.9.5",
     "solid-toast": "^0.5.0",
     "solidjs-personal-website": "file:",
-    "sweetalert2": "^11.15.10"
+    "sweetalert2": "^11.17.2"
   }
 }
