@@ -107,7 +107,10 @@ export default function Home() {
             <ol class="timeline-list">
               {resume()?.education.map((item: TEducation) => (
                 <li class="timeline-item">
-                  <h4 class="h4 timeline-item-title">{item.school}</h4>
+                  <h4
+                    class="h4 timeline-item-title"
+                    innerHTML={`<b>${item.school}</b>`}
+                  > </h4>
 
                   <span>
                     {`${item.time.start} ${RESUME_TIMELINE_SEPARATOR} ${item.time.end}`}
