@@ -1,7 +1,8 @@
 import axios from "@services/axios";
 import GithubContext from "./context";
-import { API_URL, RAW_URL, REPO_PER_PAGE, REPO_URL } from "@constants/github";
 import type { TGithubApiData, TGithubRepo } from "@interfaces/githubApiData";
+import { API_URL, RAW_URL, REPO_PER_PAGE, REPO_URL } from "@constants/github";
+import { REPO_FILTER_LIST_DEFAULT, REPO_FILTER_LIST_VALUES } from "@constants/repoFilter";
 import { Component, createMemo, createResource, createSignal, JSXElement } from "solid-js";
 
 type GithubProviderProps = {
@@ -10,6 +11,7 @@ type GithubProviderProps = {
 
 const GithubProvider: Component<GithubProviderProps> = (props) => {
   const [currentRepoPage, setCurrentRepoPage] = createSignal<number>(1);
+  const [currentRepoFilter, setCurrentRepoFilter] = createSignal<typeof REPO_FILTER_LIST_VALUES[number]>(REPO_FILTER_LIST_DEFAULT);
   const [userData] = createResource<TGithubApiData>(
     async () =>
       await axios(API_URL)
@@ -21,7 +23,7 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
   const [repos, repoInfo] = createResource<TGithubRepo[]>(
     async () =>
       await axios(API_URL)
-        .get(`/repos?per_page=${REPO_PER_PAGE}&page=${currentRepoPage()}`)
+        .get(`/repos?per_page=${REPO_PER_PAGE}&page=${currentRepoPage()}&type=${currentRepoFilter()}&sort=updated`)
         .then((response) => response.data)
         .catch(() => []),
   );
@@ -51,7 +53,9 @@ const GithubProvider: Component<GithubProviderProps> = (props) => {
     getDetailRepo,
     getRawContent,
     setCurrentRepoPage,
-    currentRepoPage
+    currentRepoPage,
+    setCurrentRepoFilter,
+    currentRepoFilter,
   }));
 
   return (
