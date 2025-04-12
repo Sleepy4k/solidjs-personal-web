@@ -2,9 +2,10 @@ import appConfig from "@config/app";
 import Github from "@contexts/github";
 import socialConfig from "@config/social";
 import { IMAGE_URL } from "@constants/github";
-import { onCleanup, onMount, Show } from "solid-js";
+import { createMemo, createSignal, onCleanup, onMount, Show } from "solid-js";
 import {
-  IoChevronDownSharp,
+  IoChevronCollapse,
+  IoChevronExpand,
   IoLocationOutline,
   IoLogoGithub,
   IoLogoInstagram,
@@ -15,30 +16,45 @@ import {
 
 export default function Sidebar() {
   let sidebarElement: HTMLElement | null = null;
-  let sidebarBtnElement: HTMLElement | null = null;
+  let sidebarButton: HTMLButtonElement | null = null;
 
   const { userData } = Github.useGithub();
+  const [isSidebarOpen, setIsSidebarOpen] = createSignal<boolean>(false);
   const dummyProfileImage =
     "https://free.clipartof.com/855-Free-Clipart-Of-A-Male-Avatar.png";
 
+  const isEmailAvailable = createMemo(() => {
+    return (
+      (userData() !== undefined && userData()?.email) ||
+      (socialConfig !== undefined && socialConfig?.email)
+    );
+  });
+
+  const isLocationAvailable = createMemo(() => {
+    return userData() !== undefined && userData()?.location;
+  });
+
   const toggleSidebar = () => {
-    sidebarElement?.classList.toggle("active");
+    if (sidebarElement) {
+      sidebarElement.classList.toggle("active");
+      setIsSidebarOpen((prev) => !prev);
+    }
   };
 
   onMount(() => {
-    sidebarBtnElement?.addEventListener("click", (e) => {
-      e.preventDefault();
-
-      toggleSidebar();
-    });
+    if (sidebarButton) {
+      sidebarButton.addEventListener("click", toggleSidebar);
+    }
   });
 
   onCleanup(() => {
-    sidebarBtnElement?.removeEventListener("click", toggleSidebar);
+    if (sidebarButton) {
+      sidebarButton.removeEventListener("click", toggleSidebar);
+    }
   });
 
   return (
-    <aside class="sidebar" ref={(el) => (sidebarElement = el)} data-sidebar>
+    <aside class="sidebar" ref={(el) => (sidebarElement = el)}>
       <div class="sidebar-info">
         <figure class="avatar-box">
           <img
@@ -63,12 +79,21 @@ export default function Sidebar() {
         <button
           type="button"
           class="info_more-btn"
-          ref={(el) => (sidebarBtnElement = el)}
+          ref={(el) => (sidebarButton = el)}
           data-sidebar-btn
         >
-          <span>Show Contacts</span>
+          <Show when={!isSidebarOpen()}>
+            <span>
+              Show Contacts
+              <IoChevronExpand />
+            </span>
+          </Show>
 
-          <IoChevronDownSharp />
+          <Show when={isSidebarOpen()}>
+            <span>
+              Hide Contacts <IoChevronCollapse />
+            </span>
+          </Show>
         </button>
       </div>
 
@@ -76,12 +101,7 @@ export default function Sidebar() {
         <div class="separator"></div>
 
         <ul class="contacts-list">
-          <Show
-            when={
-              (userData() !== undefined && userData()?.email) ||
-              (socialConfig !== undefined && socialConfig?.email)
-            }
-          >
+          <Show when={isEmailAvailable()}>
             <li class="contact-item">
               <div class="icon-box">
                 <IoMailOpenOutline />
@@ -100,7 +120,7 @@ export default function Sidebar() {
             </li>
           </Show>
 
-          <Show when={userData() !== undefined && userData()?.location}>
+          <Show when={isLocationAvailable()}>
             <li class="contact-item">
               <div class="icon-box">
                 <IoLocationOutline />
